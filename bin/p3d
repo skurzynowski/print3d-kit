@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+# Run p3d from the repo's own venv, creating it on first use.
+set -euo pipefail
+ROOT="$(cd "$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")/.." && pwd)"
+VENV="$ROOT/.venv"
+if [ ! -x "$VENV/bin/p3d" ]; then
+  echo "print3d-kit: setting up $VENV (first run, ~1 min)..." >&2
+  python3 -m venv "$VENV"
+  "$VENV/bin/pip" install -q --upgrade pip >&2
+  "$VENV/bin/pip" install -q -e "$ROOT" >&2
+fi
+exec "$VENV/bin/p3d" "$@"

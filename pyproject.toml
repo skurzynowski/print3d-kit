@@ -1,0 +1,35 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "print3d-kit"
+version = "0.1.0"
+description = "Toolkit that lets Claude Code (and humans) design simple, printable 3D models with build123d: parts library, print checks, multi-view previews, STL/3MF/STEP export."
+readme = "README.md"
+license = { text = "MIT" }
+requires-python = ">=3.10"
+authors = [{ name = "Sebastian Kurzynowski", email = "sebastian@decentprod.com" }]
+keywords = ["3d-printing", "cad", "build123d", "claude-code", "stl", "3mf"]
+dependencies = [
+  "build123d>=0.9",
+  "trimesh>=4.0",
+  "rtree>=1.0",
+  "numpy",
+  "pillow>=10",
+  "networkx",
+  "lxml",
+]
+
+[project.urls]
+Homepage = "https://github.com/skurzynowski/print3d-kit"
+Issues = "https://github.com/skurzynowski/print3d-kit/issues"
+
+[project.optional-dependencies]
+dev = ["pytest"]
+
+[project.scripts]
+p3d = "print3d_kit.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
