@@ -17,6 +17,7 @@ FLAT = 0.99  # -normal.z above this: a horizontal ceiling (bridge), not a slope
 MAX_BRIDGE = 10.0  # mm a typical FDM printer bridges cleanly
 MAX_SLOPED_OVERHANG = 50.0  # mm2 of sloped overhang before it is worth a warning
 MIN_REGION = 2.0  # mm2, smaller overhang patches are tessellation noise and not listed
+RAY_BATCH = 1000  # rays per wall-thickness batch; bounds memory (~0.4 GB) on large parts
 
 
 @dataclass
@@ -123,7 +124,7 @@ def _check_walls(mesh: trimesh.Trimesh, report: Report, min_wall: float, weak_wa
         face_idx = np.concatenate([face_idx, np.arange(len(mesh.faces))])
     normals = mesh.face_normals[face_idx]
     origins = points - normals * 1e-4
-    hits, ray_idx, _ = mesh.ray.intersects_location(origins, -normals, multiple_hits=False)
+    hits, ray_idx = _cast_inward(mesh, origins, -normals)
     if len(ray_idx) == 0:
         return
     thickness = np.linalg.norm(hits - origins[ray_idx], axis=1)
@@ -156,6 +157,23 @@ def _check_walls(mesh: trimesh.Trimesh, report: Report, min_wall: float, weak_wa
             "Prints, but is weak; often a sliver left between a cutout and an edge. Check whether it is intended.",
             {"at": at, "thickness": round(float(thickness[thinnest]), 2)},
         )
+
+
+def _cast_inward(mesh: trimesh.Trimesh, origins: np.ndarray, directions: np.ndarray) -> tuple[np.ndarray, np.ndarray]:
+    """First hit of each ray, cast in batches.
+
+    Without Embree, trimesh collects every triangle whose box meets a ray's box, for all
+    rays at once. On a large curved part that is gigabytes (8 GB on a 13 cm tower got
+    the process OOM-killed); batches keep the peak flat at the same speed.
+    """
+    all_hits, all_idx = [], []
+    for start in range(0, len(origins), RAY_BATCH):
+        hits, idx, _ = mesh.ray.intersects_location(
+            origins[start : start + RAY_BATCH], directions[start : start + RAY_BATCH], multiple_hits=False
+        )
+        all_hits.append(hits)
+        all_idx.append(idx + start)
+    return np.concatenate(all_hits).reshape(-1, 3), np.concatenate(all_idx).astype(np.int64)
 
 
 def _check_overhangs(mesh: trimesh.Trimesh, report: Report, overhang_deg: float) -> None:

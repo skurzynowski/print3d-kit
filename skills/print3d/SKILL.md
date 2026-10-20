@@ -24,7 +24,11 @@ the preview PNG** and **read the print checks** before calling anything done.
    Optionally `PRINTER = "bambu-a1"`.
 4. **Build**: `p3d build models/<name>.py` (add `-p <printer>` if needed).
    Output goes to `models/out/<name>/`: STL per part, one 3MF with all parts, STEP,
-   `preview.png`, `report.json`. Exit code 1 = errors in checks, 2 = script crashed.
+   `preview.png`, `report.json`. Exit code 1 = errors in checks, 2 = script crashed,
+   137 = killed at the memory cap (half the RAM by default). On 137 do not just raise
+   the cap: simplify the model first (fuse repeated cutters into one and subtract once,
+   fewer/coarser decorative grooves), and only then retry with `P3D_MEMORY_MAX=8G`.
+   Never run `p3d` through `.venv/bin/p3d` directly: that skips the cap.
 5. **Look at `preview.png` with the Read tool. Every time.** Compare it to the brief:
    right features, right side, holes where intended, nothing floating, part lying on
    its intended print face. Use `--views iso,back-iso,bottom,left` to see hidden sides.

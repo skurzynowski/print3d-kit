@@ -9,4 +9,18 @@ if [ ! -x "$VENV/bin/p3d" ]; then
   "$VENV/bin/pip" install -q --upgrade pip >&2
   "$VENV/bin/pip" install -q -e "$ROOT" >&2
 fi
-exec "$VENV/bin/p3d" "$@"
+
+# Cap memory so a runaway build is killed alone, not the editor and the rest of the desktop
+# with it. P3D_MEMORY_MAX takes a systemd size (4G, 50%) or "off". Linux with systemd only.
+MEM_MAX="${P3D_MEMORY_MAX:-50%}"
+if [ "$MEM_MAX" = "off" ] || ! command -v systemd-run >/dev/null || ! systemd-run --user --scope -q true 2>/dev/null; then
+  exec "$VENV/bin/p3d" "$@"
+fi
+set +e
+systemd-run --user --scope -q -p MemoryMax="$MEM_MAX" -p MemorySwapMax=0 "$VENV/bin/p3d" "$@"
+code=$?
+if [ "$code" -eq 137 ]; then
+  echo "p3d: killed after hitting the memory cap ($MEM_MAX of RAM). The model is too heavy to check:" >&2
+  echo "     simplify it (fewer boolean cuts, coarser detail) or raise the cap with P3D_MEMORY_MAX=8G." >&2
+fi
+exit "$code"
