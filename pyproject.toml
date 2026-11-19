@@ -1,13 +1,14 @@
 [build-system]
-requires = ["setuptools>=68"]
+requires = ["setuptools>=77"]
 build-backend = "setuptools.build_meta"
 
 [project]
 name = "print3d-kit"
-version = "0.2.0"
+version = "0.2.1"
 description = "Toolkit that lets Claude Code (and humans) design simple, printable 3D models with build123d: parts library, print checks, multi-view previews, STL/3MF/STEP export."
 readme = "README.md"
-license = { text = "MIT" }
+license = "MIT"
+license-files = ["LICENSE"]
 requires-python = ">=3.10"
 authors = [{ name = "Sebastian Kurzynowski", email = "sebastian@decentprod.com" }]
 keywords = ["3d-printing", "cad", "build123d", "claude-code", "stl", "3mf"]

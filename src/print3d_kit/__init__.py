@@ -14,5 +14,5 @@ Then build it with ``p3d build model.py``.
 from .place import arrange, on_bed
 from .printers import PRINTERS, Printer, get_printer
 
-__version__ = "0.2.0"
+__version__ = "0.2.1"
 __all__ = ["PRINTERS", "Printer", "arrange", "get_printer", "on_bed", "__version__"]
