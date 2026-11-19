@@ -10,6 +10,8 @@ and lets you check what it made before you waste filament.
 - **Parts library** with FDM-tuned tolerances: screw holes (clearance, tap, counterbore, countersunk) aimed along any axis, teardrop horizontal holes, nut traps, heat-set insert holes, standoffs, box with friction-fit lid, wall cutouts, L-bracket, wall hook.
 - **Claude Code skill** with the workflow and FDM design rules baked in.
 
+![Designed by the agent, then printed: ESP32 + CO2 sensor enclosure](docs/img/co2_design_to_print.jpg)
+
 | | |
 |---|---|
 | ![project box](docs/img/project_box.png) | ![L bracket](docs/img/l_bracket.png) |
