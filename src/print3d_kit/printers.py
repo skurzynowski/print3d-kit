@@ -1,6 +1,8 @@
 """Printer presets: build volume and nozzle, used by the print checks."""
 
+import os
 from dataclasses import dataclass
+from pathlib import Path
 
 
 @dataclass(frozen=True)
@@ -26,6 +28,19 @@ PRINTERS: dict[str, Printer] = {
     "prusa-core-one": Printer("prusa-core-one", (250, 220, 270)),
     "ender3": Printer("ender3", (220, 220, 250)),
 }
+
+
+CONFIG_FILE = Path(os.environ.get("XDG_CONFIG_HOME", Path.home() / ".config")) / "print3d-kit" / "printer"
+
+
+def default_printer() -> str:
+    """The user's own printer: $P3D_PRINTER, else the config file, else ``generic``."""
+    if os.environ.get("P3D_PRINTER"):
+        return os.environ["P3D_PRINTER"]
+    try:
+        return CONFIG_FILE.read_text().strip() or "generic"
+    except OSError:
+        return "generic"
 
 
 def get_printer(name: str) -> Printer:

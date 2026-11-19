@@ -114,3 +114,15 @@ def test_volume_and_mass():
     report = check(Box(10, 10, 10, align=MIN), printer=GENERIC)
     assert report.volume_mm3 == pytest.approx(1000, rel=1e-3)
     assert report.mass_g_solid == pytest.approx(1.24, abs=0.05)  # rounded to 0.1 g
+
+
+def test_default_printer(monkeypatch, tmp_path):
+    from print3d_kit import printers
+
+    monkeypatch.setattr(printers, "CONFIG_FILE", tmp_path / "printer")
+    monkeypatch.delenv("P3D_PRINTER")
+    assert printers.default_printer() == "generic"
+    (tmp_path / "printer").write_text("bambu-x1\n")
+    assert printers.default_printer() == "bambu-x1"
+    monkeypatch.setenv("P3D_PRINTER", "prusa-mk4")
+    assert printers.default_printer() == "prusa-mk4"

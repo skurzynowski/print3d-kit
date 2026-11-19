@@ -2,7 +2,9 @@
 
 from pathlib import Path
 
-from build123d import Compound, Mesher, Shape, export_step, export_stl
+from build123d import Compound, Mesher, Shape, export_step
+
+from .mesh import to_trimesh
 
 FORMATS = ("stl", "3mf", "step")
 
@@ -14,7 +16,8 @@ def export_parts(parts: dict[str, Shape], out_dir: Path, name: str, formats=FORM
     if "stl" in formats:
         for part_name, shape in parts.items():
             path = out_dir / (f"{name}.stl" if len(parts) == 1 else f"{name}-{part_name}.stl")
-            export_stl(shape, path, tolerance=0.01, angular_tolerance=0.1)
+            # Same cleaned tessellation the print checks run on, so what was checked is what prints.
+            to_trimesh(shape, tolerance=0.01, angular_tolerance=0.1).export(path)
             written.append(path)
 
     if "3mf" in formats:

@@ -3,3 +3,6 @@ __pycache__/
 *.egg-info/
 .pytest_cache/
 out/
+
+# your own models (the skill writes them to models/)
+models/

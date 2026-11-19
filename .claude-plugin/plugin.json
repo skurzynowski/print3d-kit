@@ -1,6 +1,6 @@
 {
   "name": "print3d-kit",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Design simple 3D-printable models with build123d: parts library, print checks, multi-view previews, STL/3MF/STEP export.",
   "author": { "name": "Sebastian Kurzynowski", "email": "sebastian@decentprod.com" },
   "license": "MIT",

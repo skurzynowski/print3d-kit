@@ -31,6 +31,12 @@ def table(gap: float, top: float = 3.0, leg: float = 4.0, height: float = 10.0, 
     return legs + Pos(0, 0, height) * Box(gap + 2 * leg, depth, top, align=MIN)
 
 
+@pytest.fixture(autouse=True)
+def generic_default_printer(monkeypatch):
+    """Keep the user's own default printer out of the tests."""
+    monkeypatch.setenv("P3D_PRINTER", "generic")
+
+
 @pytest.fixture
 def examples_dir():
     return EXAMPLES

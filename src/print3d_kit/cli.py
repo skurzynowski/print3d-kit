@@ -19,7 +19,7 @@ from build123d import Shape
 from . import parts as parts_lib
 from .export import FORMATS, export_parts
 from .mesh import to_trimesh
-from .printers import PRINTERS, get_printer
+from .printers import PRINTERS, default_printer, get_printer
 from .render import DEFAULT_VIEWS, VIEWS, render_preview
 from .validate import Report, check_mesh
 
@@ -69,7 +69,11 @@ def _parser() -> argparse.ArgumentParser:
 
 
 def _common(p: argparse.ArgumentParser) -> None:
-    p.add_argument("-p", "--printer", help="preset name or WxDxH, e.g. 200x200x180 (default: generic)")
+    p.add_argument(
+        "-p",
+        "--printer",
+        help="preset name or WxDxH, e.g. 200x200x180 (default: $P3D_PRINTER, ~/.config/print3d-kit/printer, or generic)",
+    )
     p.add_argument("--min-wall", type=float, help="thinnest acceptable wall in mm (default: 2 x nozzle)")
     p.add_argument("--overhang", type=float, default=45.0, help="max overhang from vertical in degrees")
     p.add_argument("--views", default=",".join(DEFAULT_VIEWS), help=f"comma list of {','.join(VIEWS)}")
@@ -104,7 +108,7 @@ def cmd_build(args) -> int:
         return 2
 
     name = args.name or ns.get("NAME") or model.stem
-    printer = _printer(args.printer or ns.get("PRINTER") or "generic")
+    printer = _printer(args.printer or ns.get("PRINTER") or default_printer())
     out = (args.out or model.parent / "out" / name).resolve()
 
     written = export_parts(shapes, out, name, formats=[f.strip() for f in args.formats.split(",") if f.strip()])
@@ -122,7 +126,7 @@ def cmd_build(args) -> int:
 
 
 def cmd_check(args) -> int:
-    printer = _printer(args.printer or "generic")
+    printer = _printer(args.printer or default_printer())
     meshes = _load_meshes(args.mesh)
     reports = [check_mesh(m, n, printer, args.min_wall, args.overhang) for n, m in meshes.items()]
     _print(args.mesh.stem, printer, reports, [], args.json)

@@ -78,9 +78,11 @@ p3d check MESH.stl|.3mf [-p PRINTER] [--min-wall 1.2] [--json]
 p3d render MESH.stl [--views iso,back-iso,bottom]
 p3d parts        # library catalog with signatures
 p3d printers     # presets: bambu-a1, bambu-a1-mini, prusa-mk4, prusa-mini, ender3, ... or WxDxH
+                 # your default: echo bambu-x1 > ~/.config/print3d-kit/printer (or P3D_PRINTER=...)
 ```
 
-Exit codes: `0` ok, `1` a check reported an error, `2` the model script failed.
+Exit codes: `0` ok, `1` a check reported an error, `2` the model script failed, `137` killed at the memory cap
+(`bin/p3d` caps memory at 50% of RAM on Linux; change with `P3D_MEMORY_MAX=8G` or `off`).
 
 ## Checks
 

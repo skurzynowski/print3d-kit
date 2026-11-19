@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "print3d-kit"
-version = "0.1.0"
+version = "0.2.0"
 description = "Toolkit that lets Claude Code (and humans) design simple, printable 3D models with build123d: parts library, print checks, multi-view previews, STL/3MF/STEP export."
 readme = "README.md"
 license = { text = "MIT" }

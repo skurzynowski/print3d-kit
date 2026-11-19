@@ -12,7 +12,8 @@ the preview PNG** and **read the print checks** before calling anything done.
 
 1. **Pin down the brief** (ask only for what you cannot sensibly assume):
    - critical dimensions in mm (what it must fit around / onto, screw sizes),
-   - printer (`p3d printers`; default `generic` 220x220x250, 0.4 mm nozzle),
+   - printer (`p3d printers`; default is the user's own from `$P3D_PRINTER` or
+     `~/.config/print3d-kit/printer`, else `generic` 220x220x250, 0.4 mm nozzle),
    - load / use (decides wall thickness and print orientation).
    State the assumptions you made in one line.
 2. **Check the library first**: `p3d parts` lists ready parts and hole cutters
@@ -21,7 +22,8 @@ the preview PNG** and **read the print checks** before calling anything done.
 3. **Write the model** to `models/<name>.py` in the user's project (create the dir).
    Put every dimension in a named UPPER_CASE constant at the top so the user can tweak it.
    The script must define `result` (one shape) or `parts` (dict name -> shape).
-   Optionally `PRINTER = "bambu-a1"`.
+   Set `PRINTER = "..."` only when the user names a printer other than their default;
+   a hardcoded `PRINTER` overrides the user's default.
 4. **Build**: `p3d build models/<name>.py` (add `-p <printer>` if needed).
    Output goes to `models/out/<name>/`: STL per part, one 3MF with all parts, STEP,
    `preview.png`, `report.json`. Exit code 1 = errors in checks, 2 = script crashed,
